@@ -51,6 +51,26 @@ public class ComplexNumber {
         return Math.sqrt(this.real * this.real + this.imaginary * this.imaginary);
     }
 
+    public double slope() {
+        return this.imaginary / this.real;
+    }
+
+    public double radient() {
+        if (this.real == 0 && this.imaginary == 0) {
+            return 0;
+        } else if (this.real >= 0 && this.imaginary >= 0) {
+            return Math.atan(slope());
+        } else if (this.real <= 0 && this.imaginary >= 0) {
+            return Math.PI + Math.atan(slope());
+        } else if (this.real <= 0 && this.imaginary <= 0) {
+            return Math.PI + Math.atan(slope());
+        } else if (this.real >= 0 && this.imaginary <= 0) {
+            return 2 * Math.PI + Math.atan(slope());
+        }
+
+        return 0;
+    }
+
     public double getReal() {
         return real;
     }
