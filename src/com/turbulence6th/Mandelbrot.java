@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 public class Mandelbrot {
 
     BufferedImage generate(int width, int height, double magnification, double startX, double startY, int loss) {
-        BufferedImage image = new BufferedImage(width,height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         ComplexNumber start = new ComplexNumber(startX, startY);
 
         ExecutorService executor = Executors.newCachedThreadPool();
@@ -16,23 +16,26 @@ public class Mandelbrot {
                 int finalI = i;
                 int finalJ = j;
                 executor.execute(() -> {
-                   ComplexNumber c = start.add(new ComplexNumber(finalI / magnification, finalJ / magnification));
-                   ComplexNumber z = ComplexNumber.ZERO;
+                    int movedI = finalI - width / 2;
+                    int movedJ = finalJ - height / 2;
 
-                   int iteration = 0;
-                   while (z.length() < 2 && iteration < 255) {
-                       z = z.multiply(z).add(c);
-                       iteration++;
-                   }
+                    ComplexNumber c = start.add(new ComplexNumber(movedI / magnification, movedJ / magnification));
+                    ComplexNumber z = ComplexNumber.ZERO;
 
-                   for (int k = 0; k < loss; k++) {
-                       for (int m = 0; m < loss; m++) {
-                           if (finalI + k < width && finalJ + m < height) {
-                               image.setRGB(finalI + k, finalJ + m, 255 - iteration);
-                           }
-                       }
-                   }
-               });
+                    int iteration = 0;
+                    while (z.length() < 2 && iteration < 51) {
+                        z = z.multiply(z).add(c);
+                        iteration++;
+                    }
+
+                    for (int k = 0; k < loss; k++) {
+                        for (int m = 0; m < loss; m++) {
+                            if (finalI + k < width && finalJ + m < height) {
+                                image.setRGB(finalI + k, finalJ + m, 0x0000ff - iteration * 5);
+                            }
+                        }
+                    }
+                });
             }
         }
 

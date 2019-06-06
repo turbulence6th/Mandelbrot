@@ -11,9 +11,9 @@ public class FractalFrame extends JFrame implements MouseWheelListener, MouseLis
 
     private Mandelbrot mandelbrot = new Mandelbrot();
     private FractalPanel fractalPanel = new FractalPanel();
-    private double magnification = 240;
-    private double startX = -1.5;
-    private double startY = -1;
+    private double magnification = 120;
+    private double startX = 0;
+    private double startY = 0;
     private int loss = 1;
 
     private int mouseStartX;
@@ -42,14 +42,9 @@ public class FractalFrame extends JFrame implements MouseWheelListener, MouseLis
 
         if (e.getWheelRotation() < 0) {
             magnification *= 1.5;
-            startX += (0.4) / (magnification * 0.0025);
-            startY += (0.2) / (magnification * 0.0025);
         }
         else {
-            startX -= (0.4) / (magnification * 0.0025);
-            startY -= (0.2) / (magnification * 0.0025);
             magnification /= 1.5;
-
         }
 
         draw();
