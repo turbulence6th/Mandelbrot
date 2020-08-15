@@ -1,3 +1,13 @@
+/**
+ * This product currently only contains code developed by authors
+ * of specific components, as identified by the source code files.
+ *
+ * Since product implements StAX API, it has dependencies to StAX API
+ * classes.
+ *
+ * For additional credits (generally to people who reported problems)
+ * see CREDITS file.
+ */
 package com.turbulence6th;
 
 import javax.swing.*;
@@ -6,6 +16,9 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class FractalFrame extends JFrame implements MouseWheelListener, MouseListener {
 
@@ -19,6 +32,9 @@ public class FractalFrame extends JFrame implements MouseWheelListener, MouseLis
     private int mouseStartX;
     private int mouseStartY;
 
+    public static ExecutorService executor = Executors.newCachedThreadPool();
+    private Future<?> work;
+
     public FractalFrame(int width, int height) {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(width, height);
@@ -30,11 +46,17 @@ public class FractalFrame extends JFrame implements MouseWheelListener, MouseLis
     }
 
     private void draw() {
-        BufferedImage image = mandelbrot.generate(getWidth(), getHeight(), magnification, startX, startY, loss);
-        fractalPanel.draw(image);
-        invalidate();
-        validate();
-        repaint();
+        if (work != null && !work.isDone()) {
+            work.cancel(true);
+        }
+
+        work = executor.submit(() -> {
+            BufferedImage image = mandelbrot.generate(getWidth(), getHeight(), magnification, startX, startY, loss);
+            fractalPanel.draw(image);
+            invalidate();
+            validate();
+            repaint();
+        });
     }
 
     @Override
